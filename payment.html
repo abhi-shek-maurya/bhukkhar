@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment - Bhukkhar</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .payment-container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #ff5722;
+        }
+
+        .section {
+            margin: 25px 0;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+            color: #444;
+            font-size: 18px;
+        }
+
+        /* .payment-option {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #ff5722;
+            background-color: #fff4ee;
+        }
+
+        .payment-option input {
+            margin-right: 15px;
+        }
+
+        .payment-option img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .confirm-btn:hover {
+            background-color: #e64a19;
+        } */
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .payment-option:hover {
+            background-color: #f7f7f7;
+        }
+
+        .payment-option input {
+            margin-right: 10px;
+        }
+
+        .payment-option img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .confirm-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .confirm-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="payment-container">
+        <h2>Choose Payment Method</h2>
+
+        <div class="section">
+            <h3>UPI Options</h3>
+            <label class="payment-option">
+                <input type="radio" name="payment" value="upi" />
+                <img src="g pay logo.webp" alt="GPay" />
+                Google Pay
+            </label>
+
+            <label class="payment-option">
+                <input type="radio" name="payment" value="upi" />
+                <img src="phonepe logo.jpg" alt="PhonePe" />
+                PhonePe
+            </label>
+
+            <label class="payment-option">
+                <input type="radio" name="payment" value="upi" />
+                <img src="paytm logo.png" alt="Paytm" />
+                Paytm UPI
+            </label>
+
+            <label class="payment-option">
+                <input type="radio" name="payment" value="upi" />
+                <img src="navi logo.png" alt="navi" />
+                Navi
+            </label>
+        </div>
+
+        <div class="section">
+            <h3>Other Options</h3>
+            <label class="payment-option">
+                <input type="radio" name="payment" value="cod" />
+                <img src="cash logo.webp" alt="COD" />
+                Cash on Delivery (COD)
+            </label>
+        </div>
+
+        <button class="confirm-btn" onclick="handlePayment()">Confirm & Pay</button>
+        <div id="fallback-message" style="display: none; text-align: center; margin-top: 20px;">
+            <p>If your UPI app didn’t open, please send ₹<span id="upi-amount"></span> manually to:</p>
+            <strong id="upi-id">ak875322286583-2@okaxis</strong>
+        </div>
+
+    </div>
+
+    <script>
+        const upiId = "ak875322286583-2@okaxis"; // Replace with your actual UPI ID
+        const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+
+        let total = 0;
+        cartData.forEach(item => {
+            total += item.price * item.quantity;
+        });
+        total += 30; // add delivery charge
+        if (total >= 500) total -= 50; // subtract discount if any
+
+        document.getElementById('upi-amount').textContent = total;
+
+        function handlePayment() {
+            const selectedOption = document.querySelector('input[name="payment"]:checked');
+
+            if (!selectedOption) {
+                alert("Please select a payment method.");
+                return;
+            }
+
+            if (selectedOption.value === "upi") {
+                const upiUrl = `upi://pay?pa=${upiId}&pn=Bhukkhar&tn=Bhukkhar%20Order&am=${total}&cu=INR`;
+
+                // Try to open UPI app (works best on mobile)
+                window.location.href = upiUrl;
+
+                // Show fallback message after a few seconds
+                setTimeout(() => {
+                    document.getElementById('fallback-message').style.display = 'block';
+                }, 3000);
+            } else if (selectedOption.value === "cod") {
+                alert("Order placed with Cash on Delivery. Thank you for ordering from Bhukkhar!");
+                localStorage.removeItem('cart');
+                window.location.href = "thankyou.html";
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>

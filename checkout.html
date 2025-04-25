@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout - Bhukkhar</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .checkout-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkout-container h2 {
+            margin-bottom: 20px;
+            color: #e63946;
+        }
+
+        .checkout-container label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .checkout-container input,
+        .checkout-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .order-summary {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .order-summary ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .order-summary li {
+            padding: 5px 0;
+        }
+
+        .place-order-btn {
+            margin-top: 25px;
+            padding: 12px;
+            width: 100%;
+            background-color: #e63946;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="checkout-container">
+        <h2>Confirm Your Order</h2>
+
+        <form id="orderForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="10-digit number">
+
+            <label for="address">Delivery Address</label>
+            <textarea id="address" rows="3" required></textarea>
+
+            <div class="order-summary" id="orderSummary">
+                <h3>Your Order</h3>
+                <ul id="summaryList"></ul>
+                <strong>Total: ₹<span id="totalAmount">0</span></strong>
+            </div>
+
+            <button type="submit" class="place-order-btn">Place Order</button>
+        </form>
+    </div>
+
+    <script>
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const summaryList = document.getElementById("summaryList");
+        const totalAmount = document.getElementById("totalAmount");
+        const orderForm = document.getElementById("orderForm");
+
+        // Populate order summary
+        let total = 0;
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            summaryList.innerHTML += `<li>${item.name} x ${item.quantity} = ₹${itemTotal}</li>`;
+        });
+        totalAmount.textContent = total;
+
+        // Handle order placement
+        orderForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const address = document.getElementById("address").value.trim();
+
+            const order = {
+                name,
+                phone,
+                address,
+                items: cart,
+                total,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Save or send the order (currently saving locally for demo)
+            let orders = JSON.parse(localStorage.getItem("orders")) || [];
+            orders.push(order);
+            localStorage.setItem("orders", JSON.stringify(orders));
+
+            // Clear cart and redirect
+            localStorage.removeItem("cart");
+            alert("Order placed successfully!");
+            window.location.href = "index.html";
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Summary - Bhukkhar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff8f0;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #ff6f3d;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px #ddd;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .item-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .item-summary img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .item-summary div {
+            flex-grow: 1;
+        }
+
+        .item-summary h4 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .item-summary p {
+            margin: 0;
+            color: #666;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .detect-location {
+            background: #f7f7f7;
+            padding: 10px;
+            border: 1px dashed #aaa;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .continue-btn {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            background-color: #ff6f3d;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .continue-btn:hover {
+            background-color: #e65a27;
+        }
+    </style>
+</head>
+
+<body>
+    <header>Order Summary</header>
+
+    <div class="container">
+        <div class="section-title">Selected Items</div>
+        <div id="order-items"></div>
+
+        <div class="section-title">Delivery Details</div>
+        <div class="form-group">
+            <label for="name">Name*</label>
+            <input type="text" id="name" placeholder="Your full name" required />
+        </div>
+        <div class="form-group">
+            <label for="mobile">Mobile Number*</label>
+            <input type="tel" id="mobile" placeholder="e.g., 9876543210" required />
+        </div>
+        <div class="form-group">
+            <label for="address">Delivery Address</label>
+            <textarea id="address" rows="3" placeholder="Enter full delivery address"></textarea>
+        </div>
+        <div class="detect-location" onclick="detectLocation()">📍 Detect My Location</div>
+
+        <button class="continue-btn" onclick="continueToPayment()">Continue to Payment</button>
+    </div>
+
+    <script>
+        // Load selected cart items
+        const orderItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const orderContainer = document.getElementById('order-items');
+
+        if (orderItems.length === 0) {
+            orderContainer.innerHTML = '<p>Your order seems empty 😔</p>';
+        } else {
+            orderItems.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('item-summary');
+                div.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div>
+            <h4>${item.name}</h4>
+            <p>₹${item.price} × ${item.quantity} = ₹${item.price * item.quantity}</p>
+          </div>
+        `;
+                orderContainer.appendChild(div);
+            });
+        }
+
+        // Location detection
+        function detectLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('address').value = data.display_name || 'Location detected.';
+                        })
+                        .catch(() => {
+                            alert("Could not detect location");
+                        });
+                }, () => {
+                    alert("Permission denied or error getting location");
+                });
+            } else {
+                alert("Geolocation not supported in your browser");
+            }
+        }
+
+        // Continue to payment
+        function continueToPayment() {
+            const name = document.getElementById('name').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const address = document.getElementById('address').value.trim();
+
+            if (!name || !mobile || !address) {
+                alert("Please fill all the required fields!");
+                return;
+            }
+
+            localStorage.setItem('customerDetails', JSON.stringify({ name, mobile, address }));
+            window.location.href = "payment.html"; // Design this later
+        }
+    </script>
+</body>
+
+</html>

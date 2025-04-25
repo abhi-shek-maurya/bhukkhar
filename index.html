@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bhukkhar | Online Food Delivery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="bhukkhar logo.png" alt="Bhukkhar Logo" class="logo">
+        </div>
+        <h1 class="site-name">Bhukkhar</h1>
+
+        <div class="location-box">
+            <span class="location-label">
+                <svg class="location-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8 0a5 5 0 0 0-5 5c0 2.238 1.574 5.13 4.243 8.455a.5.5 0 0 0 .757 0C11.426 10.13 13 7.238 13 5a5 5 0 0 0-5-5zm0 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                </svg>
+                <input type="text" id="manual-location" placeholder="Enter your location" />
+            </span>
+            <button onclick="detectLocation()" class="detect-btn">Detect Location</button>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" placeholder="Search for dishes, restaurants or cuisines" />
+            <button class="search-btn">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 0 24 24" width="22"
+                    fill="#fff">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 
+                         6.5 6.5 0 109.5 16c1.61 0 3.09-.59 
+                         4.23-1.57l.27.28v.79l5 4.99L20.49 
+                         19l-4.99-5zm-6 0C8.01 14 6 11.99 
+                         6 9.5S8.01 5 10.5 5 15 7.01 15 
+                         9.5 12.99 14 10.5 14z" />
+                </svg>
+            </button>
+        </div>
+
+    </header>
+    <section class="restaurant-section">
+        <h2>Restaurants</h2>
+        <div class="restaurant-grid">
+            <a href="biryani-grills.html" class="restaurant-card">
+                <img src="chicken biryani.webp" alt="Biryani Grills" />
+                <div class="info">
+                    <h3>Biryani Grills</h3>
+                    <p>Spice it up with the royal flavors of biryani</p>
+                </div>
+            </a>
+
+            <div class="restaurant-card"> <img src="champaran meat house.jpg" alt="Champaran Meat House" />
+                <div class="info">
+                    <h3>Champaran Meat House</h3>
+                    <p>Authentic desi meat, slow-cooked perfection</p>
+                </div>
+            </div>
+            <div class="restaurant-card"> <img src="cafe.jpg" alt="The Downtown Cafe" />
+                <div class="info">
+                    <h3>The Downtown Cafe</h3>
+                    <p>Brew, bite & vibe – your hangout hub</p>
+                </div>
+            </div>
+            <div class="restaurant-card"> <img src="rollacosta.jpg" alt="Rollacosta" />
+                <div class="info">
+                    <h3>Rollacosta</h3>
+                    <p>Wrap it, roll it, love it – every bite counts</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="recommended">
+        <h2>Recommended for You</h2>
+        <div class="recommended-grid">
+            <div class="item-card"> <img src="hyderabadi biryani.jpg" alt="Top dish 1" />
+                <div class="info">
+                    <h4>Hyderabadi Chicken Biryani</h4> <span>₹149 • 30 mins</span>
+                </div>
+            </div>
+            <div class="item-card"> <img src="paneer butter masala.jpg" alt="Top dish 2" />
+                <div class="info">
+                    <h4>Paneer Butter Masala</h4> <span>₹119 • 30 mins</span>
+                </div>
+            </div>
+            <div class="item-card"> <img src="paneer chilli dry.jpeg" alt="Top dish 3" />
+                <div class="info">
+                    <h4>Paneer Chilli Dry</h4> <span>₹119 • 30 mins</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAVIGATION -->
+    <footer class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">
+            <img src="bhukkhar logo.png" style="height: 30px; width: 30px;" alt="Home" class="nav-icon">
+            <span>Home</span>
+        </div>
+
+        <div class="nav-item" onclick="window.location.href='cart.html'">
+            <span class="material-icons nav-icon">shopping_cart</span>
+            <span>Cart</span>
+        </div>
+
+        <div class="nav-item" onclick="window.location.href='account.html'">
+            <span class="material-icons nav-icon">person</span>
+            <span>Account</span>
+        </div>
+    </footer>
+
+    <!-- location -->
+    <script>
+
+        function detectLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        const { latitude, longitude } = position.coords;
+                        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const location = data.display_name;
+                                document.getElementById("manual-location").value = location;
+                            })
+                            .catch(error => {
+                                alert("Unable to detect location");
+                                console.error(error);
+                            });
+                    },
+                    function (error) {
+                        alert("Permission denied or error detecting location.");
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+
+    </script>
+
+    <!-- restaurant's menus -->
+    <script>
+        function toggleMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.classList.toggle('active');
+        }
+
+        function searchMenu(inputEl) {
+            const query = inputEl.value.toLowerCase();
+            const menuItems = inputEl.nextElementSibling.querySelectorAll('.menu-item');
+
+            menuItems.forEach(item => {
+                const text = item.querySelector('h4').textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+    </script>
+
+
+
+</body>
+
+</html>
