@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delivery Panel</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    .order { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; }
+    button { padding: 6px 12px; }
+  </style>
+</head>
+<body>
+
+<h2>Delivery Boy Panel</h2>
+<div id="orders"></div>
+
+<script>
+  const deliveryBoyId = 'rider_001'; // optional logic to support filtering later
+
+  function loadOrders() {
+    fetch('/api/orders')
+      .then(res => res.json())
+      .then(data => {
+        const active = data.filter(o => o.status === 'Out for Delivery');
+        const div = document.getElementById('orders');
+        div.innerHTML = '';
+        active.forEach(order => {
+          div.innerHTML += `
+            <div class="order">
+              <strong>Order ID:</strong> ${order.id}<br>
+              <strong>Customer:</strong> ${order.customer}<br>
+              <strong>Status:</strong> ${order.status}<br><br>
+              <button onclick="markDelivered('${order.id}')">Mark as Delivered</button>
+            </div>
+          `;
+        });
+      });
+  }
+
+  function markDelivered(orderId) {
+    fetch(`/api/update-status?order_id=${orderId}&status=Delivered`, { method: 'POST' })
+      .then(() => loadOrders());
+  }
+
+  setInterval(loadOrders, 5000);
+  loadOrders();
+</script>
+
+</body>
+</html>

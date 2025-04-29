@@ -111,7 +111,7 @@
             display: block;
             width: 100%;
             padding: 12px;
-            background-color: #e74c3c;
+            background-color: #ff5722;
             color: white;
             font-size: 18px;
             border: none;
@@ -121,7 +121,7 @@
         }
 
         .confirm-btn:hover {
-            background-color: #c0392b;
+            background-color: #ff6f3d;
         }
     </style>
 </head>
@@ -206,7 +206,6 @@
                     document.getElementById('fallback-message').style.display = 'block';
                 }, 3000);
             } else if (selectedOption.value === "cod") {
-                alert("Order placed with Cash on Delivery. Thank you for ordering from Bhukkhar!");
                 localStorage.removeItem('cart');
                 window.location.href = "thankyou.html";
             }

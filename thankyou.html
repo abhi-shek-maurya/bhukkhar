@@ -3,76 +3,106 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Order Confirmed | Bhukkhar</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success | Bhukkhar</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            background: #fff8f0;
-            color: #333;
+            padding: 0;
+            background: #f9f9f9;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            padding: 30px;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .loading-screen,
+        .thankyou-container {
             text-align: center;
         }
 
-        .confirmation-box {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 40px 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+        .loading-screen {
+            display: block;
         }
 
-        .confirmation-box img {
-            width: 80px;
-            margin-bottom: 20px;
+        .thankyou-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .confirmation-box h1 {
-            color: #E65100;
-            font-size: 28px;
-            margin-bottom: 15px;
+        .spinner {
+            border: 6px solid #eee;
+            border-top: 6px solid #ff5722;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
         }
 
-        .confirmation-box p {
-            font-size: 16px;
-            color: #555;
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
-        .btn-back-home {
-            margin-top: 25px;
-            background: #E65100;
-            color: #fff;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 6px;
+        .btn-home {
             display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff5722;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
             font-weight: bold;
-            transition: 0.3s ease;
-        }
-
-        .btn-back-home:hover {
-            background-color: #bf4600;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="confirmation-box">
-        <img src="confirmed.gif" alt="Confirmed" />
-        <h1>Order Confirmed!</h1>
-        <p>Thank you for ordering with <strong>Bhukkhar</strong> 🍽️<br>
-            Your delicious food is on the way and will be delivered soon!</p>
-
-        <a href="index.html" class="btn-back-home">Back to Home</a>
+    <!-- Loading screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div>
+        <h2>Please wait... verifying your order</h2>
     </div>
+
+    <!-- Thank you success screen -->
+    <div class="thankyou-container" id="thankyou-container">
+        <div style="margin-bottom: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="#e0f7e9" stroke="#34d058" stroke-width="4" />
+                <path fill="none" stroke="#34d058" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"
+                    d="M40 60l12 12 28-28">
+                    <animate attributeName="stroke-dasharray" from="0,100" to="100,0" dur="0.6s" fill="freeze" />
+                </path>
+            </svg>
+        </div>
+
+        <h1>Thank You!</h1>
+        <p>Your delicious food is being prepared. 🍽️</p>
+
+        <div style="margin-top: 20px;">
+            <a href="index.html" class="btn-home" style="margin-right: 10px;">Back to Home</a>
+            <a href="track-order.html" class="btn-home" style="background: #4CAF50;">Track My Order</a>
+        </div>
+
+    </div>
+
+    <script>
+        // Show loading screen for 2.5 seconds, then show thank you screen
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('thankyou-container').style.display = 'flex';
+        }, 2500);
+
+    </script>
 
 </body>
 

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Track Order | Bhukkhar</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #fdfdfd;
+        }
+
+        .header {
+            background: #ff5722;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .status-box {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .status-box h2 {
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .status-stage {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .status-stage span {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: #eee;
+        }
+
+        .status-stage .active {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">🍔 Bhukkhar Order Tracking</div>
+
+    <div class="content">
+        <div class="status-box">
+            <h2>Order ID: <span id="order-id">#12345</span></h2>
+            <p>Status: <strong id="status-text">Fetching...</strong></p>
+            <p>Estimated Delivery Time: <span id="eta-text">-- mins</span></p>
+
+            <div class="status-stage">
+                <span id="step-accepted">Accepted</span>
+                <span id="step-preparing">Preparing</span>
+                <span id="step-out">Out for Delivery</span>
+                <span id="step-delivered">Delivered</span>
+            </div>
+        </div>
+
+        <div id="map"></div>
+
+        <p class="footer-note">Live location updates every 10 seconds</p>
+    </div>
+
+    <script>
+        const orderId = localStorage.getItem("bhukkhar_order_id") || "12345"; // Can store this in thankyou.html
+        document.getElementById("order-id").textContent = "#" + orderId;
+
+        function updateStatusUI(status) {
+            const stages = ['accepted', 'preparing', 'out', 'delivered'];
+            stages.forEach(stage => {
+                document.getElementById('step-' + stage).classList.remove('active');
+            });
+
+            switch (status.toLowerCase()) {
+                case 'accepted':
+                    document.getElementById('step-accepted').classList.add('active');
+                    break;
+                case 'preparing':
+                    document.getElementById('step-preparing').classList.add('active');
+                    break;
+                case 'out for delivery':
+                    document.getElementById('step-out').classList.add('active');
+                    break;
+                case 'delivered':
+                    document.getElementById('step-delivered').classList.add('active');
+                    break;
+            }
+
+            document.getElementById("status-text").textContent = status;
+        }
+
+        function fetchOrderStatus() {
+            fetch(`/api/get-order-status?order_id=${orderId}`)
+                .then(res => res.json())
+                .then(data => {
+                    updateStatusUI(data.status);
+                    document.getElementById("eta-text").textContent = data.eta + " mins";
+                })
+                .catch(err => {
+                    console.error("Failed to fetch status:", err);
+                });
+        }
+
+        let map, marker;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 14,
+                center: { lat: 26.85, lng: 80.95 }, // Default center
+            });
+
+            marker = new google.maps.Marker({
+                map: map,
+                icon: "https://cdn-icons-png.flaticon.com/512/1048/1048314.png",
+                title: "Delivery Guy"
+            });
+
+            updateLocation();
+            fetchOrderStatus();
+
+            setInterval(updateLocation, 10000);
+            setInterval(fetchOrderStatus, 15000);
+        }
+
+        function updateLocation() {
+            fetch(`/api/get-location?order_id=${orderId}`)
+                .then(res => res.json())
+                .then(data => {
+                    const pos = { lat: data.lat, lng: data.lng };
+                    marker.setPosition(pos);
+                    map.panTo(pos);
+                })
+                .catch(err => console.error("Location fetch failed:", err));
+        }
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+    </script>
+</body>
+
+</html>
